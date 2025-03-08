@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# SHA256 Hash Calculator
+# Usage: Drag and drop a file onto this script or run it with a file as argument
+
+# Check if a file was provided
+if [ $# -eq 0 ]; then
+    echo "No file provided. Please drag and drop a file onto this script."
+    echo "Alternatively, run: $0 /path/to/file"
+    exit 1
+fi
+
+# Get the full path of the file
+file_path="$1"
+
+# Check if the file exists
+if [ ! -f "$file_path" ]; then
+    echo "Error: File does not exist or is not a regular file: $file_path"
+    exit 1
+fi
+
+# Calculate SHA256 hash
+echo "Calculating SHA256 hash for: $(basename "$file_path")"
+echo "----------------------------------------"
+sha256sum "$file_path" | awk '{print $1}'
+echo "----------------------------------------"
+echo "File: $file_path"
