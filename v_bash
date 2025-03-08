@@ -1,27 +1,41 @@
 #!/bin/bash
 
-# SHA256 Hash Calculator
-# Usage: Drag and drop a file onto this script or run it with a file as argument
+# SHA256 Hash Calculator for macOS
+# Usage: Run this script and then drag and drop files onto the terminal window
 
-# Check if a file was provided
+# Function to calculate hash for a file
+calculate_hash() {
+    local file_path="$1"
+    
+    # Check if the file exists
+    if [ ! -f "$file_path" ]; then
+        echo "Error: File does not exist or is not a regular file: $file_path"
+        return 1
+    fi
+    
+    # Calculate SHA256 hash
+    echo "----------------------------------------"
+    echo "Calculating SHA256 hash for: $(basename "$file_path")"
+    shasum -a 256 "$file_path" | awk '{print $1}'
+    echo "File: $file_path"
+    echo "----------------------------------------"
+}
+
+# Check if arguments were provided
 if [ $# -eq 0 ]; then
-    echo "No file provided. Please drag and drop a file onto this script."
-    echo "Alternatively, run: $0 /path/to/file"
-    exit 1
+    echo "No files provided as arguments."
+    echo "Please drag and drop a file onto this terminal window after the command."
+    echo "Example: ./hash.sh /path/to/file"
+    echo ""
+    echo "Waiting for input... (Press Ctrl+C to exit)"
+    
+    # Wait for user to drag files
+    while read -p "Drag file here: " file_path; do
+        calculate_hash "$file_path"
+    done
+else
+    # Process all provided arguments
+    for file_path in "$@"; do
+        calculate_hash "$file_path"
+    done
 fi
-
-# Get the full path of the file
-file_path="$1"
-
-# Check if the file exists
-if [ ! -f "$file_path" ]; then
-    echo "Error: File does not exist or is not a regular file: $file_path"
-    exit 1
-fi
-
-# Calculate SHA256 hash
-echo "Calculating SHA256 hash for: $(basename "$file_path")"
-echo "----------------------------------------"
-sha256sum "$file_path" | awk '{print $1}'
-echo "----------------------------------------"
-echo "File: $file_path"
